@@ -13,7 +13,6 @@ c = sin(deg2rad(10));
 d = -cos(deg2rad(10));
 wall = Wall(a,b,c,d,lim);  % to define the wall
 wall.plotwall();           % to plot the wall
-
 %% place your trajectory generation code here
 % 1) An example trajectory can be loaded from the 'q.mat' file
 letter_path_g = [
@@ -44,7 +43,7 @@ tacc = 0.5;
 q = mstraj(letter_path_g, qdmax, [], q0, dt, tacc);
 
 % Set depth correctly
-k=-0.034729635533386/0.196961550602442; % Beautiful magic number
+k=-c/a;
 length=size(q(:,1));
 for i = 1:length(1)
     q(i,1) = q(i,3)*k;
