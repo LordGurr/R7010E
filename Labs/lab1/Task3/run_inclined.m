@@ -17,9 +17,43 @@ wall.plotwall();           % to plot the wall
 %% place your trajectory generation code here
 % 1) An example trajectory can be loaded from the 'q.mat' file
 
-load q_inclined.mat
-traj=q;
 
+
+
+letter_path_g = [
+0 235 285;
+0 230 270;
+0 240 250;
+0 260 235;
+0 290 245;
+0 295 265;
+0 290 290;
+0 265 290;
+0 265 265;];
+letter_path_g=[letter_path_g(:,1) -letter_path_g(:,3) -letter_path_g(:,2)];
+
+letter_path_g = letter_path_g- letter_path_g(1,:);
+scaler = 0.008;
+
+letter_path_g= letter_path_g*scaler;
+qdmax = [1 1 1];
+q0 = [0 -1 0]*scaler;
+
+% Sampling time
+dt = 0.1;
+
+% Acceleration time
+tacc = 0.5;
+k=-0.034729635533386/0.196961550602442;
+% Generate trajectory
+q = mstraj(letter_path_g, qdmax, [], q0, dt, tacc);
+length=size(q(:,1));
+for i = 1:length(1)
+    q(i,1) = q(i,3)*k;
+end
+traj=q;
+%load q_inclined.mat
+%traj=q;
 %% send to robot
 Tp =SE3(0.6, 0, 0) *   SE3(traj) * SE3.oa( [0 1 0], [1 0 0.1]);
 q = p560.ikine6s(Tp);
