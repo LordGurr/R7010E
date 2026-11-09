@@ -16,10 +16,6 @@ wall.plotwall();           % to plot the wall
 
 %% place your trajectory generation code here
 % 1) An example trajectory can be loaded from the 'q.mat' file
-
-
-
-
 letter_path_g = [
 0 235 285;
 0 230 270;
@@ -44,9 +40,11 @@ dt = 0.1;
 
 % Acceleration time
 tacc = 0.5;
-k=-0.034729635533386/0.196961550602442;
 % Generate trajectory
 q = mstraj(letter_path_g, qdmax, [], q0, dt, tacc);
+
+% Set depth correctly
+k=-0.034729635533386/0.196961550602442; % Beautiful magic number
 length=size(q(:,1));
 for i = 1:length(1)
     q(i,1) = q(i,3)*k;
