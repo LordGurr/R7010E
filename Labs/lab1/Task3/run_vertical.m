@@ -16,8 +16,31 @@ wall.plotwall();           % to plot the wall
 
 %% place your trajectory generation code here
 % 1) An example trajectory can be loaded from the 'q.mat' file
+scaler = 0.2;
+path = [
+0 0.5 1;
+0 1 0;
+0 0 -1
+0 -0.5 0.2]*scaler;
+qdmax = [1 1 1];
+q0 = [0 -1 0]*scaler;
 
-load q_vertical.mat
+% Sampling time
+dt = 0.1;
+
+% Acceleration time
+tacc = 0.5;
+
+% Generate trajectory
+q = mstraj(path, qdmax, [], q0, dt, tacc);
+
+% Generate time vector
+%t = (0:size(q,1)-1)*dt;
+%plot_points(x,y,z)
+%plot3(q(:,1), q(:,2), q(:,3))
+%hold off;
+%load q_vertical.mat
+
 traj=q;
 
 %% send to robot

@@ -27,7 +27,7 @@ path=[ p_init;...
        90 0 ;...
        p_goal
     ];
-%% Genrate trajectory
+%% Generate trajectory
 QDMAX=[7,7]; %axis speed limits
 Q0= path(1,:); %initial axis coordinates
 DT=0.1;
