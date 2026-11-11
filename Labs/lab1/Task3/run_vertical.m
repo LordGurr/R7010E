@@ -31,7 +31,7 @@ letter_path_g=[letter_path_g(:,1) -letter_path_g(:,3) -letter_path_g(:,2)];
 
 
 letter_path_g = letter_path_g- letter_path_g(1,:);
-scaler = 0.005;
+scaler = 0.004;
 
 letter_path_g= letter_path_g*scaler;
 
@@ -43,16 +43,15 @@ letter_path_j = [
 0 122 282;
 0 118 273;];
 
-scaler = 0.007;
+scaler = 0.006;
 
 letter_path_j=[letter_path_j(:,1) -letter_path_j(:,2) -letter_path_j(:,3)];
 letter_path_j = letter_path_j- letter_path_j(1,:);
 
 letter_path_j= letter_path_j*scaler;
-letter_path_g = letter_path_g + [0 -0.21 0];
-letter_path_j = letter_path_j + [0 0.21 0];
+letter_path_g = letter_path_g + [0 -0.215 0];
+letter_path_j = letter_path_j + [0 0.235 0];
 
-letter_path_g = [letter_path_j; letter_path_g];
 qdmax = [1 1 1];
 %q0 = [0 -1 0]*scaler;
 
@@ -63,7 +62,11 @@ dt = 0.1;
 tacc = 0.5;
 
 % Generate trajectory
-q = mstraj(letter_path_g, qdmax, [], [], dt, tacc);
+
+q_j = mstraj(letter_path_j, qdmax, [], [], dt, tacc);
+qdmax = [0.05 0.05 0.05];
+
+q_g = mstraj(letter_path_g, qdmax, [], tail(q_j,1), dt, tacc);
 
 % Generate time vector
 %t = (0:size(q,1)-1)*dt;
@@ -72,7 +75,7 @@ q = mstraj(letter_path_g, qdmax, [], [], dt, tacc);
 %hold off;
 %load q_vertical.mat
 
-traj=q;
+traj=[q_j; q_g];
 
 %% send to robot
 Tp =SE3(0.6, 0, 0) *   SE3(traj) * SE3.oa( [0 1 0], [1 0 0.1]);
