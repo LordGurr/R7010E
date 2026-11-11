@@ -15,6 +15,19 @@ wall = Wall(a,b,c,d,lim);  % to define the wall
 wall.plotwall();           % to plot the wall
 
 %% place your trajectory generation code here
+
+function path = blend_points(a,b)
+    qdmax = [1 1 1];
+    %q0 = [0 -1 0]*scaler;
+    
+    % Sampling time
+    dt = 0.1;
+    
+    % Acceleration time
+    tacc = 0.5;
+    path = mstraj(b, qdmax, [],a, dt, tacc);
+end
+
 % 1) An example trajectory can be loaded from the 'q.mat' file
 letter_path_g = [
     0 235 285;
@@ -66,8 +79,20 @@ tacc = 0.5;
 q_j = mstraj(letter_path_j, qdmax, [], [], dt, tacc);
 qdmax = [0.05 0.05 0.05];
 
-q_g = mstraj(letter_path_g, qdmax, [], tail(q_j,1), dt, tacc);
+q_g = mstraj(letter_path_g, qdmax, [], [], dt, tacc);
 
+
+q_j_end = tail(q_j,1);
+
+q_j_end(1,1) = -0.01;
+
+
+q_g_start = head(q_g,1);
+q_g_start(1,1) = -0.01;
+q_jg = blend_points(q_j_end, q_g_start);
+
+qdmax = [1 1 1];
+q_jg = [blend_points(tail(q_j,1), head(q_jg,1)); q_jg; blend_points(tail(q_jg,1), head(q_g,1))];
 % Generate time vector
 %t = (0:size(q,1)-1)*dt;
 %plot_points(x,y,z)
@@ -75,7 +100,7 @@ q_g = mstraj(letter_path_g, qdmax, [], tail(q_j,1), dt, tacc);
 %hold off;
 %load q_vertical.mat
 
-traj=[q_j; q_g];
+traj=[q_j; q_jg; q_g];
 
 %% send to robot
 Tp =SE3(0.6, 0, 0) *   SE3(traj) * SE3.oa( [0 1 0], [1 0 0.1]);
