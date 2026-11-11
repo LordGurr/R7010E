@@ -7,6 +7,7 @@ load map1
 about map
 %% plot the map
 plot(Bug2(map))
+hold on
 %% Initial position and heading of the robot
 p_init=[50 30]; % [x,y]
 %% Goal location of the robot 
@@ -34,4 +35,6 @@ DT=0.1;
 traj = mstraj(path, QDMAX, [], Q0, DT, 0.3);
 %% Plot the path
 obstacle=1; %0 when there is no door to block the way, 1 the door will be on
+plot(traj(:,1),traj(:,2))
 animatepath(traj,DT,obstacle)
+hold off

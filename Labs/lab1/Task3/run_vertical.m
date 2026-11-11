@@ -28,12 +28,33 @@ letter_path_g = [
     0 265 265;];
 letter_path_g=[letter_path_g(:,1) -letter_path_g(:,3) -letter_path_g(:,2)];
 
+
+
 letter_path_g = letter_path_g- letter_path_g(1,:);
-scaler = 0.009;
+scaler = 0.005;
 
 letter_path_g= letter_path_g*scaler;
+
+letter_path_j = [
+0 118 238;
+0 145 238;
+0 145 277;
+0 134 283;
+0 122 282;
+0 118 273;];
+
+scaler = 0.007;
+
+letter_path_j=[letter_path_j(:,1) -letter_path_j(:,2) -letter_path_j(:,3)];
+letter_path_j = letter_path_j- letter_path_j(1,:);
+
+letter_path_j= letter_path_j*scaler;
+letter_path_g = letter_path_g + [0 -0.21 0];
+letter_path_j = letter_path_j + [0 0.21 0];
+
+letter_path_g = [letter_path_j; letter_path_g];
 qdmax = [1 1 1];
-q0 = [0 -1 0]*scaler;
+%q0 = [0 -1 0]*scaler;
 
 % Sampling time
 dt = 0.1;
@@ -42,7 +63,7 @@ dt = 0.1;
 tacc = 0.5;
 
 % Generate trajectory
-q = mstraj(letter_path_g, qdmax, [], q0, dt, tacc);
+q = mstraj(letter_path_g, qdmax, [], [], dt, tacc);
 
 % Generate time vector
 %t = (0:size(q,1)-1)*dt;
