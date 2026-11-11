@@ -33,18 +33,59 @@ function path = rotate_path(theta, path)
     path = path * Ry';
 end
 
+function path = blend_points(a,b)
+    qdmax = [1 1 1];
+    %q0 = [0 -1 0]*scaler;
+    
+    % Sampling time
+    dt = 0.1;
+    
+    % Acceleration time
+    tacc = 50;
+    path = mstraj(b, qdmax, [],a, dt, tacc);
+end
 r = linspace(3, 3, 500);
 
 path = generate_helix_path(37, r, 0.1);
 path2 = generate_helix_path(25, r, 0.1);
-path2 = rotate_path(120, path2) +[3 -5 38];
+path2 = rotate_path(120, path2) +[3 -5 39];
 path3 = generate_helix_path(25, r, 0.1);
-path3 = rotate_path(-120, path3) +[-3 -5 38];
-path4 = generate_helix_path(25, r, 0.1);
-path4 = path4 +[0 -5 44];
+path3 = rotate_path(-120, path3) +[-3 -5 39];
+
+path4 = [
+0 -10 41;
+3 -5 41;
+3 6 41;
+0 6 41;
+-3 6 41;
+-3 -5 41;
+0 -5 45;
+0 6 45;
+0 6 37;
+0 2 37;
+5 2 39;
+5 2 43];
+qdmax = [1 1 1];
+%q0 = [0 -1 0]*scaler;
+
+% Sampling time
+dt = 0.1;
+
+% Acceleration time
+tacc = 50;
+
+path4 = mstraj(path4, qdmax, [], tail(path3,1), dt, tacc);
 
 
-path = [path; path2; path3; path4];
+path5 = generate_helix_path(25, r, 0.1);
+path5 = path5 +[0 -5 44];
+
+
+path = [path; blend_points(tail(path,1), head(path2))];
+path2 = [path2; blend_points(tail(path2,1), head(path3))];
+path3 = [path3; blend_points(tail(path3,1), head(path4))];
+path4 = [path4; blend_points(tail(path4,1), head(path5))];
+path = [path; path2; path3; path4; path5];
 
 % Plot the 3D spiral
 plot3(path(:,1), path(:,2), path(:,3), 'LineWidth', 2);
