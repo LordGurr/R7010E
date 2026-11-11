@@ -13,25 +13,29 @@ axis equal
 hold on
 
 hold on
-% Spiral radius and vertical growth rate
+
+function path = generate_helix_path(height, r, c)
+    % Define parameter t for the spiral turns
+    length = height/(pi*c);
+    t = linspace(1, length*pi, 500);
+    
+    % Parametric equations
+    x = r .* cos(t);
+    y = r .* sin(t);
+    z = c * t;
+    path = [x' y' z'];
+end
+
 height = 37;
 r = linspace(4.5, 3, 500);
-%r=4;
-c = 0.1;
 
-% Define parameter t for the spiral turns
-length = height/(pi*c);
-t = linspace(1, length*pi, 500);
+path = generate_helix_path(37, r, 0.1);
 
-% Parametric equations
-x = r .* cos(t);
-y = r .* sin(t);
-z = c * t;
 
 
 
 % Plot the 3D spiral
-plot3(x, y, z, 'LineWidth', 2);
+plot3(path(:,1), path(:,2), path(:,3), 'LineWidth', 2);
 grid on;
 axis equal;
 hold off
