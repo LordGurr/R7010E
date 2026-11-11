@@ -17,7 +17,7 @@ wall.plotwall();           % to plot the wall
 %% place your trajectory generation code here
 
 function path = blend_points(a,b)
-    qdmax = [1 1 1];
+    qdmax = [0.5 0.5 0.5];
     %q0 = [0 -1 0]*scaler;
     
     % Sampling time
@@ -89,10 +89,12 @@ q_j_end(1,1) = -0.01;
 
 q_g_start = head(q_g,1);
 q_g_start(1,1) = -0.01;
-q_jg = blend_points(q_j_end, q_g_start);
+q_jg = [tail(q_j,1); q_j_end; q_g_start; head(q_g,1)];
+%q_jg = blend_points(q_j_end, q_g_start);
 
 qdmax = [1 1 1];
-q_jg = [blend_points(tail(q_j,1), head(q_jg,1)); q_jg; blend_points(tail(q_jg,1), head(q_g,1))];
+%q_jg = [blend_points(tail(q_j,1), head(q_jg,1)); mstraj(q_jg, qdmax, []); blend_points(tail(q_jg,1), head(q_g,1))];
+q_jg = mstraj(q_jg, qdmax, [], [], dt, tacc);
 % Generate time vector
 %t = (0:size(q,1)-1)*dt;
 %plot_points(x,y,z)
