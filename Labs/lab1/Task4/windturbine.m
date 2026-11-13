@@ -44,14 +44,23 @@ function path = blend_points(a,b)
     tacc = 50;
     path = mstraj(b, qdmax, [],a, dt, tacc);
 end
-r = linspace(3, 3, 500);
+qdmax = [1 1 1];
+%q0 = [0 -1 0]*scaler;
 
+% Sampling time
+dt = 0.1;
+
+% Acceleration time
+tacc = 50;
+
+% Create segments
+r = linspace(4, 2.5, 500);
 path = generate_helix_path(37, r, 0.1);
+r = linspace(3.5, 2.5, 500);
 path2 = generate_helix_path(25, r, 0.1);
 path2 = rotate_path(120, path2) +[3 -5 39];
 path3 = generate_helix_path(25, r, 0.1);
 path3 = rotate_path(-120, path3) +[-3 -5 39];
-
 path4 = [
 0 -10 41;
 3 -5 41;
@@ -65,26 +74,15 @@ path4 = [
 0 2 37;
 5 2 39;
 5 2 43];
-qdmax = [1 1 1];
-%q0 = [0 -1 0]*scaler;
-
-% Sampling time
-dt = 0.1;
-
-% Acceleration time
-tacc = 50;
-
 path4 = mstraj(path4, qdmax, [], tail(path3,1), dt, tacc);
-
-
 path5 = generate_helix_path(25, r, 0.1);
 path5 = path5 +[0 -5 44];
-
-
+% Connect path segments
 path = [path; blend_points(tail(path,1), head(path2))];
 path2 = [path2; blend_points(tail(path2,1), head(path3))];
 path3 = [path3; blend_points(tail(path3,1), head(path4))];
 path4 = [path4; blend_points(tail(path4,1), head(path5))];
+% Combine
 path = [path; path2; path3; path4; path5];
 
 % Plot the 3D spiral

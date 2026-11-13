@@ -71,14 +71,9 @@ q_g = mstraj(letter_path_g, qdmax, [], [], dt, tacc);
 
 
 q_j_end = tail(q_j,1);
-
 q_j_end(1,1) = -0.01;
-
-
 q_g_start = head(q_g,1);
 q_g_start(1,1) = -0.01;
-q_jg = [tail(q_j,1); q_j_end; q_g_start; head(q_g,1)];
-
 qdmax = [1 1 1];
 q_jg = mstraj(q_jg, qdmax, [], [], dt, tacc);
 

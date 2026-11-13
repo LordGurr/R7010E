@@ -42,7 +42,7 @@ tacc = 0.5;
 % Generate trajectory
 q = mstraj(letter_path_g, qdmax, [], q0, dt, tacc);
 
-% Set depth correctly
+% Offset depth
 k=-c/a;
 length=size(q(:,1));
 for i = 1:length(1)
