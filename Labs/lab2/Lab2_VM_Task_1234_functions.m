@@ -133,21 +133,37 @@ function [throttle, theta_out, dir, error] = controller(desired_position,y,x,the
 end
 
 function [index,desired_position] = Navigator(index, x,y,theta, pattern)
-    square_motion = [0 1 0; 1 1 0; 1 0 0; 0 0 0];
+    square_motion = [0 10 0; 10 10 0; 10 0 0; 0 0 0];
     j_motion = [
-        0 0 0;
-        5.6533 0 0;
-        5.6533 -8.1659 0;
-        3.3501-9.4221 0;
-        0.8375 -9.2128 0;
-        0 -7.3283 0;];
-    patterns= [square_motion j_motion];
-    desired_position = patterns(pattern, index);
-    if (norm(desired_position -[x y])<0.12)
-        error = mod(desired_position(3) - theta + pi, 2*pi) - pi;
-        if(error<0.4)
-            index = mod(index +1,length(patterns(pattern)));
-            desired_position = patterns(pattern, index);
+    0 0 0;
+    5.6533 0 0;
+    5.6533 -8.1659 0;
+    3.3501 -9.4221 0;
+    0.8375 -9.2128 0;
+    0 -7.3283 0
+    ];
+    % Store paths in a cell array
+    patterns = {square_motion, j_motion};
+
+    % Select current path
+    current_pattern = patterns{pattern};
+
+    % Get current waypoint
+    desired_position = current_pattern(index,:);
+
+    % Check distance to waypoint
+    if norm(desired_position(1:2) - [x y]) < 0.12
+
+        % Calculate angular error
+        angle_error = mod(desired_position(3) - theta + pi, 2*pi) - pi;
+
+        if abs(angle_error) < 0.4
+
+            % Advance waypoint index and wrap around
+            index = mod(index, size(current_pattern,1)) + 1;
+
+            % Update desired waypoint
+            desired_position = current_pattern(index,:);
         end
     end
 end
