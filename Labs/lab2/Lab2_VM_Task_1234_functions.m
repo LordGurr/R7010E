@@ -87,15 +87,35 @@ function [throttle, theta_out, dir, error] = controller(desired_position,y,x,the
     distance= norm(direction);
     dir = atan2(direction(2),direction(1));
     theta_diff = mod(theta-prev_theta + pi, 2*pi) - pi;
-    if (distance < slow_dist)
-        error = mod(d_theta-theta + pi, 2*pi) - pi;
-        if(abs(error)<0.1)
-            theta_out=0;
-            throttle=0;
+    if distance < slow_dist
+    
+        % Final orientation error
+        error = mod(d_theta - theta + pi, 2*pi) - pi;
+    
+        % Angular velocity
+        theta_rate = theta_diff / dt;
+    
+        % Controller gains
+        Kp_final = 0.8;
+        Kd_final = 0.3;
+    
+        % PD controller
+        theta_out = Kp_final*error - Kd_final*theta_rate;
+    
+        % Limit angular velocity
+        max_angular = 0.3;
+        theta_out = max(min(theta_out, max_angular), -max_angular);
+    
+        % Stopping condition
+        if abs(error) < 0.03 && abs(theta_rate) < 0.04
+            theta_out = 0;
+            throttle = 0;
             return;
         end
-        theta_out=error*Kp- (theta_diff/(dt+1e-5))*Kd;
+    
+        % Low forward velocity during final alignment
         throttle = slow_speed;
+    
         return;
     end
     error = mod(dir-theta + pi, 2*pi) - pi;
