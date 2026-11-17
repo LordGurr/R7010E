@@ -131,3 +131,23 @@ function [throttle, theta_out, dir, error] = controller(desired_position,y,x,the
         throttle = 0.5;
     end
 end
+
+function [index,desired_position] = Navigator(index, x,y,theta, pattern)
+    square_motion = [0 1 0; 1 1 0; 1 0 0; 0 0 0];
+    j_motion = [
+        0 0 0;
+        5.6533 0 0;
+        5.6533 -8.1659 0;
+        3.3501-9.4221 0;
+        0.8375 -9.2128 0;
+        0 -7.3283 0;];
+    patterns= [square_motion j_motion];
+    desired_position = patterns(pattern, index);
+    if (norm(desired_position -[x y])<0.12)
+        error = mod(desired_position(3) - theta + pi, 2*pi) - pi;
+        if(error<0.4)
+            index = mod(index +1,length(patterns(pattern)));
+            desired_position = patterns(pattern, index);
+        end
+    end
+end
