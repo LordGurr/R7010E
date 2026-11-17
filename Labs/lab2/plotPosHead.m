@@ -29,6 +29,10 @@ function plotPosHead(x_out, y_out, psi_out)
     % Format the graph
     grid on;
     axis equal; % Keeps angles visually accurate
+    ax = gca;
+    %ax.DataAspectRatio = [1 1 1];
+    ax.DataAspectRatioMode = 'manual';
+    ax.PlotBoxAspectRatioMode = 'manual';
     xlabel('X Position');
     ylabel('Y Position');
     title('Trajectory with Heading Arrows (1s Intervals)');
