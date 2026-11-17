@@ -71,3 +71,43 @@ function throttle = Linear_Velocity(desired_position,y,x,Angular_Velocity, slow_
     end
     throttle = min(distance, 0.5);
 end
+
+function [throttle, theta_out, dir, error] = controller(desired_position,y,x,theta, slow_dist, prev_theta, dt)
+    slow_speed=0.01;
+    d_theta = desired_position(3);
+    desired_position = desired_position(1:2);
+    position = [x y];
+    Kp = 0.1;
+    Kd= 0.2;
+    %x2=desired_position[1];
+    %y2=desired_position[2];
+    
+    % Get direction towards goal
+    direction =desired_position-position;
+    distance= norm(direction);
+    dir = atan2(direction(2),direction(1));
+    theta_diff = mod(theta-prev_theta + pi, 2*pi) - pi;
+    if (distance < slow_dist)
+        error = mod(d_theta-theta + pi, 2*pi) - pi;
+        if(abs(error)<0.1)
+            theta_out=0;
+            throttle=0;
+            return;
+        end
+        theta_out=error*Kp- (theta_diff/(dt+1e-5))*Kd;
+        throttle = slow_speed;
+        return;
+    end
+    error = mod(dir-theta + pi, 2*pi) - pi;
+    % Compare with current heading
+    
+    % Deciding direction to rotate
+    theta_out=error*Kp- (theta_diff/(dt+1e-5))*Kd;
+    theta_out=clip(theta_out,-0.5,0.5);
+    %throttle = 0.5 * max(0, 1 - abs(error)/pi);
+    if(abs(theta_out)>0.02)
+        throttle = slow_speed;
+    else
+        throttle = 0.5;
+    end
+end
