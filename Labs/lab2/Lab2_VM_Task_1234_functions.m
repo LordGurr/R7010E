@@ -113,8 +113,11 @@ end
 
 function [throttle, theta_out, dir, error] = controller(desired_position,y,x,theta, slow_dist, prev_theta, dt)
     slow_speed=0.01;
-    d_theta = desired_position(3);
-    desired_position = desired_position(1:2);
+    d_theta =-1;
+    if (length(desired_position)>2)
+        d_theta = desired_position(3);
+        %desired_position = desired_position(1:2);
+    end
     position = [x y];
     Kp = 0.1;
     Kd= 0.2;
@@ -122,12 +125,17 @@ function [throttle, theta_out, dir, error] = controller(desired_position,y,x,the
     %y2=desired_position[2];
     
     % Get direction towards goal
-    direction =desired_position-position;
+    direction =desired_position(1:2)-position;
     distance= norm(direction);
     dir = atan2(direction(2),direction(1));
     theta_diff = mod(theta-prev_theta + pi, 2*pi) - pi;
     if distance < slow_dist
-    
+        if (d_theta==-1)
+            theta_out = 0;
+            throttle = 0;
+            error=0;
+            return;
+        end            
         % Final orientation error
         error = mod(d_theta - theta + pi, 2*pi) - pi;
     
