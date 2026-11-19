@@ -4,7 +4,8 @@ y = points.Data(:,2,1);
 
 
 
-%plot(ranges.Data(2,:))
+plot(ranges.Data(2,:))
+
 
 function points = point_cloud(ranges)
     l=length(ranges);
@@ -35,5 +36,45 @@ function points = point_cloud2(ranges)
     end
 end
 
-new_points = point_cloud2(ranges.Data(2,:));
-plot(new_points(:,1),new_points(:,2),'o')
+function points = point_cloud3(ranges,angle_min,angle_max)
+    ranges = ranges(:);
+    l = length(ranges);
+    angles = linspace(angle_min, angle_max, l)';
+    valid = isfinite(ranges) & ranges >= 0.12 & ranges <= 3.5;
+    points = [ranges.*cos(angles), ranges.*sin(angles)];
+    points(~valid,:) = NaN;   % NaN so they don't plot at the origin
+end
+
+function ptCloud = scanToPointCloud(AngleMin, AngleMax, RangeMin, RangeMax, Ranges)
+    r = double(Ranges(:));
+    n = numel(r);
+    
+    if n > 1
+        inc = (AngleMax - AngleMin) / (n - 1);
+    else
+        inc = 0;
+    end
+    angles = AngleMin + (0:n-1)' * inc;
+    
+    % Drop inf, NaN, and out-of-range readings
+    valid = isfinite(r) & r >= RangeMin & r <= RangeMax;
+    r = r(valid);
+    a = angles(valid);
+    
+    xyz = [r.*cos(a), r.*sin(a), zeros(size(r))];
+    ptCloud = pointCloud(xyz);   % Computer Vision Toolbox
+end
+
+%newPoints = scanToPointCloud(0,2*pi,0.12,3.5,ranges.Data(2));
+%plot(new_points(:,1),new_points(:,2),'o')
+
+%newPoints = scanToPointCloud(0, pi, 0.12, 3.5, ranges.Data(2,:));
+%plot(newPoints.Location(:,1), newPoints.Location(:,2), 'o')
+for k= 1:100:10400
+    new_points = point_cloud3(ranges.Data(k,:),0,pi*0.75);
+    %new_points = point_cloud(ranges.Data(2,:));
+    axis equal
+    plot(new_points(:,1),new_points(:,2),'o')
+    pause(0.02);
+    k
+end
