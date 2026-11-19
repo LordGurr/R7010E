@@ -70,8 +70,8 @@ end
 
 %newPoints = scanToPointCloud(0, pi, 0.12, 3.5, ranges.Data(2,:));
 %plot(newPoints.Location(:,1), newPoints.Location(:,2), 'o')
-for k= 1:100:10400
-    new_points = point_cloud3(ranges.Data(k,:),0,pi*0.75);
+for k= 1:100:23880
+    new_points = point_cloud3(ranges.Data(k,:),0,pi*2);
     %new_points = point_cloud(ranges.Data(2,:));
     axis equal
     plot(new_points(:,1),new_points(:,2),'o')
