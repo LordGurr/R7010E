@@ -75,10 +75,13 @@ for k= 1:100:size(points.Data,3)
     %new_points = point_cloud(ranges.Data(2,:));
     axis equal
     %plot(new_points(:,1),new_points(:,2),'o')
-    plot(points.Data(1,:,k),points.Data(2,:,k),'o')
+    %plot(points.Data(:,1,k),points.Data(:,2,k),'o')
 
-    pause(0.02);
+    %pause(0.02);
     k
 end
 
-plot(points.Data(1,:,:),points.Data(2,:,:),'o')
+
+
+total_points = reshape(permute(points.Data, [1, 3, 2]), [], size(points.Data, 2));
+plot(total_points(:,1),total_points(:,2),'o')
