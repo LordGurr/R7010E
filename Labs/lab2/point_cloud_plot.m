@@ -1,87 +1,53 @@
-x = points.Data(:,1,1);
-y = points.Data(:,2,1);
-%plot(x,y,'o')
+filename = 'wall_follow.gif';
+for T= 1:10:length(theta.Time)
+    t = theta.Time(T);
 
+    k = find(points.Time==t);
+    plot(points.Data(:,1,k),points.Data(:,2,k),'o')
+    hold on
+    %plotPosHead(x,y,theta)
+    plot(x.Data, y.Data, 'b-', 'LineWidth', 1.5); 
+    hold on
+    %k = find(theta.Time==t)
+    psi_arrow = theta.Data(T);
+    u = cos(psi_arrow);
+    v = sin(psi_arrow);
+    x_arrow = x.Data(T);
+    y_arrow = y.Data(T);
 
+    quiver(x_arrow, y_arrow, u, v, 0.5, 'r', 'LineWidth', 1.5, 'MaxHeadSize', 0.5);
+    hold on
+    a = line.Data(1,:,T);
+    b = line.Data(2,:,T);
+    c = line.Data(3,:,T);
 
-plot(ranges.Data(2,:))
+    x_line = linspace(0, 6, 100);
+    y_line = -(a * x_line + c) / b;
 
+    plot(x_line, y_line, 'LineWidth', 2)
+    axis equal
+    xlim([-2 7])
+    ylim([-10 -6])
+    hold off
+    pause(0.01);
 
-function points = point_cloud(ranges)
-    l=length(ranges);
-    points = zeros(l, 2);
-    for i = 1:l
-        if ~isinf(ranges(i))
-            angle = (i/l) * 2*pi;
-            points(i,:) = [ranges(i)*cos(angle), ...
-                ranges(i)*sin(angle)];
-        end
-    end
-end
+    % Capture current figure
+    frame = getframe(gcf);
+    im = frame2im(frame);
+    [imind, cm] = rgb2ind(im, 256);
 
-
-function points = point_cloud2(ranges)
-    l = length(ranges);
-    points = zeros(l, 2);
-    
-    for i = 1:l
-        if isfinite(ranges(i)) && ranges(i) > 0
-            angle = (i-1) * (2*pi/l);
-    
-            points(i,:) = [
-                ranges(i)*cos(angle), ...
-                ranges(i)*sin(angle)
-                ];
-        end
-    end
-end
-
-function points = point_cloud3(ranges,angle_min,angle_max)
-    ranges = ranges(:);
-    l = length(ranges);
-    angles = linspace(angle_min, angle_max, l)';
-    valid = isfinite(ranges) & ranges >= 0.12 & ranges <= 3.5;
-    points = [ranges.*cos(angles), ranges.*sin(angles)];
-    points(~valid,:) = NaN;   % NaN so they don't plot at the origin
-end
-
-function ptCloud = scanToPointCloud(AngleMin, AngleMax, RangeMin, RangeMax, Ranges)
-    r = double(Ranges(:));
-    n = numel(r);
-    
-    if n > 1
-        inc = (AngleMax - AngleMin) / (n - 1);
+    % Write to GIF
+    if T == 1
+        imwrite(imind, cm, filename, 'gif', ...
+            'LoopCount', inf, 'DelayTime', 0.1);
     else
-        inc = 0;
+        imwrite(imind, cm, filename, 'gif', ...
+            'WriteMode', 'append', 'DelayTime', 0.1);
     end
-    angles = AngleMin + (0:n-1)' * inc;
-    
-    % Drop inf, NaN, and out-of-range readings
-    valid = isfinite(r) & r >= RangeMin & r <= RangeMax;
-    r = r(valid);
-    a = angles(valid);
-    
-    xyz = [r.*cos(a), r.*sin(a), zeros(size(r))];
-    ptCloud = pointCloud(xyz);   % Computer Vision Toolbox
 end
 
-%newPoints = scanToPointCloud(0,2*pi,0.12,3.5,ranges.Data(2));
-%plot(new_points(:,1),new_points(:,2),'o')
-
-%newPoints = scanToPointCloud(0, pi, 0.12, 3.5, ranges.Data(2,:));
-%plot(newPoints.Location(:,1), newPoints.Location(:,2), 'o')
-%for k= 1:100:size(points.Data,3)
-    %new_points = point_cloud3(ranges.Data(k,:),0,pi*2);
-    %new_points = point_cloud(ranges.Data(2,:));
-    %axis equal
-    %plot(new_points(:,1),new_points(:,2),'o')
-    %plot(points.Data(:,1,k),points.Data(:,2,k),'o')
-
-    %pause(0.02);
-    %k
-%end
 
 
 
-total_points = reshape(permute(points.Data, [1, 3, 2]), [], size(points.Data, 2));
-plot(total_points(:,1),total_points(:,2),'o')
+%total_points = reshape(permute(points.Data, [1, 3, 2]), [], size(points.Data, 2));
+%plot(total_points(:,1),total_points(:,2),'o')
