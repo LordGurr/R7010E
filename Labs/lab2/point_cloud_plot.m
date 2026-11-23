@@ -1,5 +1,6 @@
 filename = 'wall_follow.gif';
-for T= 1:10:length(theta.Time)
+save_gif=false;
+for T= 1:100:length(theta.Time)
     t = theta.Time(T);
 
     k = find(points.Time==t);
@@ -29,20 +30,21 @@ for T= 1:10:length(theta.Time)
     xlim([-2 7])
     ylim([-10 -6])
     hold off
-    pause(0.01);
+    pause(0.5);
 
     % Capture current figure
     frame = getframe(gcf);
     im = frame2im(frame);
     [imind, cm] = rgb2ind(im, 256);
-
-    % Write to GIF
-    if T == 1
-        imwrite(imind, cm, filename, 'gif', ...
-            'LoopCount', inf, 'DelayTime', 0.1);
-    else
-        imwrite(imind, cm, filename, 'gif', ...
-            'WriteMode', 'append', 'DelayTime', 0.1);
+    if(save_gif)
+        % Write to GIF
+        if T == 1
+            imwrite(imind, cm, filename, 'gif', ...
+                'LoopCount', inf, 'DelayTime', 0.1);
+        else
+            imwrite(imind, cm, filename, 'gif', ...
+                'WriteMode', 'append', 'DelayTime', 0.1);
+        end
     end
 end
 
