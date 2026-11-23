@@ -1,6 +1,6 @@
-filename = 'wall_follow.gif';
-save_gif=false;
-for T= 1:100:length(theta.Time)
+filename = 'uneven_wall_follow.gif';
+save_gif=true;
+for T= 1:10:length(theta.Time)
     t = theta.Time(T);
 
     k = find(points.Time==t);
@@ -22,15 +22,15 @@ for T= 1:100:length(theta.Time)
     b = line.Data(2,:,T);
     c = line.Data(3,:,T);
 
-    x_line = linspace(0, 6, 100);
+    x_line = linspace(x_arrow-5, x_arrow+5, 100);
     y_line = -(a * x_line + c) / b;
 
     plot(x_line, y_line, 'LineWidth', 2)
     axis equal
-    xlim([-2 7])
-    ylim([-10 -6])
+    xlim([x_arrow-10 x_arrow+10])
+    %ylim([-10 -6])
     hold off
-    pause(0.5);
+    %pause(0.01);
 
     % Capture current figure
     frame = getframe(gcf);
@@ -40,10 +40,10 @@ for T= 1:100:length(theta.Time)
         % Write to GIF
         if T == 1
             imwrite(imind, cm, filename, 'gif', ...
-                'LoopCount', inf, 'DelayTime', 0.1);
+                'LoopCount', inf, 'DelayTime', 0.01);
         else
             imwrite(imind, cm, filename, 'gif', ...
-                'WriteMode', 'append', 'DelayTime', 0.1);
+                'WriteMode', 'append', 'DelayTime', 0.01);
         end
     end
 end
